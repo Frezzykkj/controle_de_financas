@@ -1,133 +1,98 @@
-import json
+import datetime
+import streamlit as st
+from services.logic import salvar_dados, transacoes, calcular_por_categoria, calcular_resumo, limites, salvar_limites, filtrar_por_periodo
 
-#lista das transações, onde cada transação é um dicionário com as chaves "valor" e "tipo"
-def carregar_dados():
-    try:
-        with open("transacoes.json", "r") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return []
-    except json.JSONDecodeError:
-        print("Erro ao carregar os dados. O arquivo está corrompido.")
-        return []
-    
-def carregar_limites():
-    try:
-        with open("limites.json", "r") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {
-            "alimentação": 1000,
-            "transporte": 200,
-            "lazer": 500,
-            "outros": 1000
-        }
-    except json.JSONDecodeError:
-        print("Erro ao carregar os dados. O arquivo está corrompido.")
-        return {}
+#resumo financeiro
+st.title("Resumo Financeiro")
 
-transacoes = carregar_dados()
+saldo_entrada, saldo_saida, saldo_total = calcular_resumo()
 
-limites = carregar_limites()
+col1, col2, col3 = st.columns(3)
 
+with col1:
+    st.metric("Saldo total", f"R$ {saldo_total:.2f}")
 
+with col2:
+    st.metric("Valor total de entradas", f"R$ {saldo_entrada:.2f}")
 
-#streamlit
-def salvar_dados():
-    with open("transacoes.json", "w") as f:
-        json.dump(transacoes, f)
+with col3:
+    st.metric("Valor total de saídas", f"R$ {saldo_saida:.2f}")
 
-def salvar_limites():
-    with open("limites.json", "w") as f:
-        json.dump(limites, f)
+#resumo financeiro
 
-def calcular_por_categoria():
-    totais_categoria = {
-        "alimentação": 0,
-        "transporte": 0,
-        "lazer": 0,
-        "outros": 0
-    }
+#adicionar transação
+st.title("Adicionar transação")
 
-    for t in transacoes:
-        if t["tipo"] == "saida":
-            if t["categoria"] in totais_categoria:
-                totais_categoria[t["categoria"]] += t["valor"]
-    return totais_categoria
+valor = st.number_input("digite o valor:")
+tipo = st.selectbox("qual o tipo da transação?", ["entrada", "saida"])
+if tipo == "entrada":
+    categoria = None
+elif tipo == "saida":
+    categoria = st.selectbox("qual a categoria da transação?", ["alimentação", "transporte", "lazer", "outros"])
+comentario = st.text_input("comentário (opcional)")
+data = st.date_input("data", value=datetime.date.today())
 
 
-def imprimir_transacoes(lista):
-    if not lista:
-        print("nenhuma transação encontrada.")
-        return
-    for t in lista:
-        print(f"valor: {t['valor']}, tipo: {t['tipo']}, categoria: {t['categoria']} comentário: {t.get('comentario', '')} data: {t.get('data', '')}")
 
-def mostrar_transacoes():
-    if not transacoes:
-        print("nenhuma transação registrada.")
-    else:
-        print("transações registradas:")
-        imprimir_transacoes(transacoes)
+if st.button("adicionar"):
+    transacoes.append({"valor": valor, "tipo": tipo, "categoria": categoria, "comentario": comentario, "data": str(data)})
+    salvar_dados()
+    st.success("Transação adicionada com sucesso")
+    st.rerun()
+#adicionar transação
 
-def calcular_resumo():
-    saldo_entrada = 0
-    saldo_saida = 0
+#mostrar transações
+st.title("Transações registradas")
 
-    for t in transacoes:
-        if t["tipo"] == "entrada":
-                saldo_entrada += t["valor"]
-        elif t["tipo"] == "saida":
-                saldo_saida += t["valor"]
+st.dataframe(transacoes)
 
-    saldo_total = saldo_entrada - saldo_saida
+data_inicial = st.date_input("data inicial")
+data_final = st.date_input("data final")
 
-    return saldo_entrada, saldo_saida, saldo_total
+if st.button("filtrar por período"):
+    filtradas = filtrar_por_periodo(data_inicial, data_final)
+    st.dataframe(filtradas)
+    st.success("Transações filtradas por período")
 
-def filtrar_por_tipo(opcao):
-        
-    filtradas = []
+st.title("Gasto por categoria")
 
+totais = calcular_por_categoria()
 
-    for t in transacoes:
-        if opcao == "1" and t["tipo"] == "entrada":
-            filtradas.append(t)
-        elif opcao == "2" and t["tipo"] == "saida":
-            filtradas.append(t)
-    
-    if not filtradas:
-        print("nenhuma transação encontrada para o tipo selecionado.")
-        return
-    imprimir_transacoes(filtradas)
+dados = {
+      "categoria": list(totais.keys()),
+      "valor": list(totais.values())
+}
 
-def filtrar_por_categoria(opcao):
+st.bar_chart(dados, x="categoria", y="valor")
 
-    filtradas = []
-
-    for t in transacoes:
-        if opcao == "1" and t["categoria"] == "alimentação":
-            filtradas.append(t)
-        elif opcao == "2" and t["categoria"] == "transporte":
-            filtradas.append(t)
-        elif opcao == "3" and t["categoria"] == "lazer":
-            filtradas.append(t)
-    if not filtradas:
-        print("nenhuma transação encontrada para a categoria selecionada.")
-        return
-    imprimir_transacoes(filtradas)
-
-def filtrar_por_periodo(data_inicial, data_final):
-
-    filtradas = []
-
-    for t in transacoes:
-        if str(data_inicial) <= t.get("data", "") <= str(data_final):
-            filtradas.append(t)
-
-    if not filtradas:
-        print("nenhuma transação encontrada para o período selecionado.")
-    
-    return filtradas
+st.title("Gerenciar limites por categoria")
 
 
-#opções para o usuário escolher o que deseja fazer
+nlimit_alimentacao = st.number_input("limite alimentação", value=limites["alimentação"], key="limite_alimentacao")
+nlimit_transporte = st.number_input("limite transporte", value=limites["transporte"], key="limite_transporte")
+nlimit_lazer = st.number_input("limite lazer", value=limites["lazer"], key="limite_lazer")
+nlimit_outros = st.number_input("limite outros", value=limites["outros"], key="limite_outros")
+
+if st.button("Salvar limites"):
+    limites["alimentação"] = nlimit_alimentacao
+    limites["transporte"] = nlimit_transporte
+    limites["lazer"] = nlimit_lazer
+    limites["outros"] = nlimit_outros
+    salvar_limites()
+    st.success("Limites atualizados com sucesso")
+    st.rerun()
+
+for categoria in limites.keys():
+    total_categoria = totais[categoria]
+    limite_categoria = limites[categoria]
+    limite_restante = limite_categoria - total_categoria
+
+    st.progress(min(total_categoria / limite_categoria, 1), text=f"Gasto em {categoria}: R$ {total_categoria:.2f} / R$ {limite_categoria:.2f}")
+
+    if total_categoria <= limite_categoria * 0.8:
+        st.success(f"Você esta abaixo de 80% do limite de {categoria}! Limite restante: R$ {limite_restante:.2f}")
+    elif total_categoria < limite_categoria:
+        st.warning(f"Cuidado! Você esta acima de 80% do limite de {categoria}! Limite restante: R$ {limite_restante:.2f}")
+    elif total_categoria >= limite_categoria:
+        st.error(f"Atenção: gasto em {categoria} ultrapassou o limite definido!")
+
