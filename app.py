@@ -10,8 +10,26 @@ def carregar_dados():
     except json.JSONDecodeError:
         print("Erro ao carregar os dados. O arquivo está corrompido.")
         return []
+    
+def carregar_limites():
+    try:
+        with open("limites.json", "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {
+            "alimentação": 1000,
+            "transporte": 200,
+            "lazer": 500,
+            "trabalho": None,
+            "outros": 1000
+        }
+    except json.JSONDecodeError:
+        print("Erro ao carregar os dados. O arquivo está corrompido.")
+        return []
 
 transacoes = carregar_dados()
+
+limites = carregar_limites()
 
 
 
@@ -20,12 +38,15 @@ def salvar_dados():
     with open("transacoes.json", "w") as f:
         json.dump(transacoes, f)
 
+def salvar_limites():
+    with open("limites.json", "w") as f:
+        json.dump(limites, f)
+
 def calcular_por_categoria():
     totais_categoria = {
         "alimentação": 0,
         "transporte": 0,
         "lazer": 0,
-        "trabalho": 0,
         "outros": 0
     }
 
@@ -40,7 +61,7 @@ def imprimir_transacoes(lista):
         print("nenhuma transação encontrada.")
         return
     for t in lista:
-        print(f"valor: {t['valor']}, tipo: {t['tipo']}, categoria: {t['categoria']}")
+        print(f"valor: {t['valor']}, tipo: {t['tipo']}, categoria: {t['categoria']} comentário: {t.get('comentario', '')}")
 
 def mostrar_transacoes():
     if not transacoes:
