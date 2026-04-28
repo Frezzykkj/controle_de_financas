@@ -104,7 +104,7 @@ Além disso, o sistema fornece feedback visual:
 ### 1. Clonar o repositório
 
 ```bash
-git clone https://github.com/SEU_USUARIO/controle_de_financas.git
+git clone https://github.com/joaordantas/controle_de_financas.git
 cd controle_de_financas
 ```
 
@@ -125,7 +125,7 @@ pip install streamlit
 ### 4. Executar o projeto
 
 ```bash
-streamlit run app.py
+streamlit run streamlit_app.py
 ```
 
 ---
