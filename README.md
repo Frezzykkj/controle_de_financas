@@ -33,7 +33,11 @@ Além de ser uma ferramenta pessoal, este projeto também foi desenvolvido como 
 
   🖥️ Preview
 
-> *(adicione aqui prints do seu app rodando)*
+<img width="946" height="696" alt="{52ED988D-3014-4770-B607-AD5E86E65D45}" src="https://github.com/user-attachments/assets/3e7c5304-ab81-4d71-ac80-dc07239afaa7" />
+<img width="806" height="544" alt="{67DAE384-BFEB-4C7C-BF68-A2B083980249}" src="https://github.com/user-attachments/assets/5b6be0a1-1229-463a-9f69-ab635c4c10b4" />
+<img width="800" height="458" alt="{AFC45BC1-DDEC-453C-A909-F92DA8D7D5EB}" src="https://github.com/user-attachments/assets/b06d27ec-a5d4-4e6a-a9ff-589b92367859" />
+<img width="763" height="836" alt="{ECCCA1D9-30D7-40DD-AF7D-B2F4E2BE26B8}" src="https://github.com/user-attachments/assets/9144c1d6-d3a1-441a-92b0-cbe6b2bc8dfd" />
+
 
 ---
 
