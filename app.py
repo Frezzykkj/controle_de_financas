@@ -20,12 +20,11 @@ def carregar_limites():
             "alimentação": 1000,
             "transporte": 200,
             "lazer": 500,
-            "trabalho": None,
             "outros": 1000
         }
     except json.JSONDecodeError:
         print("Erro ao carregar os dados. O arquivo está corrompido.")
-        return []
+        return {}
 
 transacoes = carregar_dados()
 
@@ -51,8 +50,9 @@ def calcular_por_categoria():
     }
 
     for t in transacoes:
-        if t["categoria"] in totais_categoria:
-            totais_categoria[t["categoria"]] += t["valor"]
+        if t["tipo"] == "saida":
+            if t["categoria"] in totais_categoria:
+                totais_categoria[t["categoria"]] += t["valor"]
     return totais_categoria
 
 
@@ -106,7 +106,7 @@ def adicionar_transacao():
         print("1. alimentação")
         print("2. transporte")
         print("3. lazer")
-        print("4. trabalho")
+        print("4. outros")
 
         categoria_opcao = input("digite a opção (1, 2, 3 ou 4): ")
 
@@ -116,8 +116,6 @@ def adicionar_transacao():
             categoria = "transporte"
         elif categoria_opcao == "3":
             categoria = "lazer"
-        elif categoria_opcao == "4":
-            categoria = "trabalho"
         else:            
             print("opção inválida. A transação não será adicionada.")
             return
@@ -155,7 +153,6 @@ def filtrar_por_categoria():
     print("1. alimentação")
     print("2. transporte")
     print("3. lazer")
-    print("4. trabalho")
     opcao = input("digite a opção (1, 2, 3 ou 4): ")
     
     if opcao not in ["1", "2", "3", "4"]:
@@ -170,8 +167,6 @@ def filtrar_por_categoria():
         elif opcao == "2" and t["categoria"] == "transporte":
             filtradas.append(t)
         elif opcao == "3" and t["categoria"] == "lazer":
-            filtradas.append(t)
-        elif opcao == "4" and t["categoria"] == "trabalho":
             filtradas.append(t)
     if not filtradas:
         print("nenhuma transação encontrada para a categoria selecionada.")

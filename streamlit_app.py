@@ -17,7 +17,10 @@ st.title("Adicionar transação")
 
 valor = st.number_input("digite o valor:")
 tipo = st.selectbox("qual o tipo da transação?", ["entrada", "saida"])
-categoria = st.selectbox("qual a categoria da transação?", ["alimentação", "transporte", "lazer", "trabalho", "outros"])
+if tipo == "entrada":
+    categoria = None
+elif tipo == "saida":
+    categoria = st.selectbox("qual a categoria da transação?", ["alimentação", "transporte", "lazer", "outros"])
 comentario = st.text_input("comentário (opcional)")
 
 if st.button("adicionar"):
@@ -66,14 +69,17 @@ total_transporte = totais["transporte"]
 total_lazer = totais["lazer"]
 total_outros = totais["outros"]
 
-for categoria in ["alimentação", "transporte", "lazer", "outros"]:
+for categoria in limites.keys():
     total_categoria = totais[categoria]
     limite_categoria = limites[categoria]
+    limite_restante = limite_categoria - total_categoria
+
+    st.progress(total_categoria / limite_categoria, text=f"Gasto em {categoria}: R$ {total_categoria:.2f} / R$ {limite_categoria:.2f}")
 
     if total_categoria <= limite_categoria * 0.8:
-        st.success(f"Você esta abaixo de 80% do limite de {categoria}!")
+        st.success(f"Você esta abaixo de 80% do limite de {categoria}! Limite restante: R$ {limite_restante:.2f}")
     elif total_categoria < limite_categoria:
-        st.warning(f"Cuidado! Você esta acima de 80% do limite de {categoria}!")
+        st.warning(f"Cuidado! Você esta acima de 80% do limite de {categoria}! Limite restante: R$ {limite_restante:.2f}")
     elif total_categoria >= limite_categoria:
         st.error(f"Atenção: gasto em {categoria} ultrapassou o limite definido!")
 
