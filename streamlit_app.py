@@ -74,7 +74,7 @@ for categoria in limites.keys():
     limite_categoria = limites[categoria]
     limite_restante = limite_categoria - total_categoria
 
-    st.progress(total_categoria / limite_categoria, text=f"Gasto em {categoria}: R$ {total_categoria:.2f} / R$ {limite_categoria:.2f}")
+    st.progress(min(total_categoria / limite_categoria, 1), text=f"Gasto em {categoria}: R$ {total_categoria:.2f} / R$ {limite_categoria:.2f}")
 
     if total_categoria <= limite_categoria * 0.8:
         st.success(f"Você esta abaixo de 80% do limite de {categoria}! Limite restante: R$ {limite_restante:.2f}")
