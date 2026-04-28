@@ -177,7 +177,7 @@ def filtrar_por_categoria():
 if __name__ == "__main__":
     while True:
 
-        print("selecione uma opção:")
+        print("Selecione uma opção:")
         print("1. adicionar transação")
         print("2. mostrar transações")
         print("3. calcular resumo")
