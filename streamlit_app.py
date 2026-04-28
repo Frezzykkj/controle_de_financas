@@ -1,14 +1,22 @@
+import datetime
 import streamlit as st
-from app import carregar_dados, salvar_dados, transacoes, calcular_por_categoria, calcular_resumo, limites, salvar_limites
+from app import salvar_dados, transacoes, calcular_por_categoria, calcular_resumo, limites, salvar_limites, filtrar_por_periodo
 
 #resumo financeiro
 st.title("Resumo Financeiro")
 
 saldo_entrada, saldo_saida, saldo_total = calcular_resumo()
 
-st.write(f"saldo total: R$ {saldo_total}")
-st.write(f"Valor total de entradas: R$ {saldo_entrada}")
-st.write(f"Valor total de saídas: R$ {saldo_saida}")
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.metric("Saldo total", f"R$ {saldo_total:.2f}")
+
+with col2:
+    st.metric("Valor total de entradas", f"R$ {saldo_entrada:.2f}")
+
+with col3:
+    st.metric("Valor total de saídas", f"R$ {saldo_saida:.2f}")
 
 #resumo financeiro
 
@@ -22,9 +30,12 @@ if tipo == "entrada":
 elif tipo == "saida":
     categoria = st.selectbox("qual a categoria da transação?", ["alimentação", "transporte", "lazer", "outros"])
 comentario = st.text_input("comentário (opcional)")
+data = st.date_input("data", value=datetime.date.today())
+
+
 
 if st.button("adicionar"):
-    transacoes.append({"valor": valor, "tipo": tipo, "categoria": categoria, "comentario": comentario})
+    transacoes.append({"valor": valor, "tipo": tipo, "categoria": categoria, "comentario": comentario, "data": str(data)})
     salvar_dados()
     st.success("Transação adicionada com sucesso")
     st.rerun()
@@ -34,6 +45,14 @@ if st.button("adicionar"):
 st.title("Transações registradas")
 
 st.dataframe(transacoes)
+
+data_inicial = st.date_input("data inicial")
+data_final = st.date_input("data final")
+
+if st.button("filtrar por período"):
+    filtradas = filtrar_por_periodo(data_inicial, data_final)
+    st.dataframe(filtradas)
+    st.success("Transações filtradas por período")
 
 st.title("Gasto por categoria")
 

@@ -61,7 +61,7 @@ def imprimir_transacoes(lista):
         print("nenhuma transação encontrada.")
         return
     for t in lista:
-        print(f"valor: {t['valor']}, tipo: {t['tipo']}, categoria: {t['categoria']} comentário: {t.get('comentario', '')}")
+        print(f"valor: {t['valor']}, tipo: {t['tipo']}, categoria: {t['categoria']} comentário: {t.get('comentario', '')} data: {t.get('data', '')}")
 
 def mostrar_transacoes():
     if not transacoes:
@@ -84,56 +84,8 @@ def calcular_resumo():
 
     return saldo_entrada, saldo_saida, saldo_total
 
-
-#terminal 
-def adicionar_transacao():
-        valor = float(input("digite o valor da transação: "))
-
-        print("qual o tipo da transação?")
-        print("1. entrada")
-        print("2. saida")
-
-        opcao = (input("digite a opção (1 ou 2): "))
-        if opcao == "1":
-            tipo = "entrada"
-        elif opcao == "2":
-            tipo = "saida"
-        else:
-            print("opção inválida. A transação não será adicionada.")
-            return
+def filtrar_por_tipo(opcao):
         
-        print("qual a categoria da transação?")
-        print("1. alimentação")
-        print("2. transporte")
-        print("3. lazer")
-        print("4. outros")
-
-        categoria_opcao = input("digite a opção (1, 2, 3 ou 4): ")
-
-        if categoria_opcao == "1":
-            categoria = "alimentação"
-        elif categoria_opcao == "2":
-            categoria = "transporte"
-        elif categoria_opcao == "3":
-            categoria = "lazer"
-        else:            
-            print("opção inválida. A transação não será adicionada.")
-            return
-        
-        
-        transacoes.append({"valor": valor, "tipo": tipo, "categoria": categoria})
-        salvar_dados()
-
-def filtrar_por_tipo():
-    print("qual tipo de transação deseja filtrar?")
-    print("1. entrada")
-    print("2. saida")
-    opcao = input("digite a opção (1 ou 2): ")
-
-    if opcao not in ["1", "2"]:
-        print("opção inválida. Por favor, tente novamente.")
-        return
-    
     filtradas = []
 
 
@@ -148,17 +100,8 @@ def filtrar_por_tipo():
         return
     imprimir_transacoes(filtradas)
 
-def filtrar_por_categoria():
-    print("qual categoria de transação deseja filtrar?")
-    print("1. alimentação")
-    print("2. transporte")
-    print("3. lazer")
-    opcao = input("digite a opção (1, 2, 3 ou 4): ")
-    
-    if opcao not in ["1", "2", "3", "4"]:
-        print("opção inválida. Por favor, tente novamente.")
-        return
-    
+def filtrar_por_categoria(opcao):
+
     filtradas = []
 
     for t in transacoes:
@@ -173,28 +116,18 @@ def filtrar_por_categoria():
         return
     imprimir_transacoes(filtradas)
 
+def filtrar_por_periodo(data_inicial, data_final):
+
+    filtradas = []
+
+    for t in transacoes:
+        if str(data_inicial) <= t.get("data", "") <= str(data_final):
+            filtradas.append(t)
+
+    if not filtradas:
+        print("nenhuma transação encontrada para o período selecionado.")
+    
+    return filtradas
+
+
 #opções para o usuário escolher o que deseja fazer
-if __name__ == "__main__":
-    while True:
-
-        print("selecione uma opção:")
-        print("1. adicionar transação")
-        print("2. mostrar transações")
-        print("3. calcular resumo")
-        print("4. filtrar por tipo")
-        print("5. filtrar por categoria")
-
-        input_usuario = input("digite a opção (1, 2, 3, 4 ou 5): ")
-
-        if input_usuario == "1":
-            adicionar_transacao()
-        elif input_usuario == "2":
-            mostrar_transacoes()
-        elif input_usuario == "3":
-            calcular_resumo()
-        elif input_usuario == "4":
-            filtrar_por_tipo()
-        elif input_usuario == "5":
-            filtrar_por_categoria()
-        else:
-            print("opção inválida. Por favor, tente novamente.")
