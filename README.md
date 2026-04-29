@@ -125,7 +125,7 @@ pip install streamlit
 ### 4. Executar o projeto
 
 ```bash
-streamlit run streamlit_app.py
+streamlit run app.py
 ```
 
 ---
