@@ -1,11 +1,9 @@
-from services.database import adicionar_parcela, adicionar_venda, criar_banco, listar_parcelas, listar_parcelas_por_cliente, listar_vendas, marcar_pago
-
-criar_banco()
-
 import pandas as pd
 import datetime
 import streamlit as st
 from services.logic import salvar_dados, transacoes, calcular_por_categoria, calcular_resumo, limites, salvar_limites, filtrar_por_periodo
+from services.database import adicionar_parcela, adicionar_venda, criar_banco, listar_parcelas, listar_parcelas_por_cliente, listar_vendas, marcar_pago, calcular_total_pagos, buscar_valor_total
+criar_banco()
 
 aba1, aba2 = st.tabs(["💰 Financeiro", "🛠️ Serviços"])
 
@@ -141,6 +139,21 @@ with aba2:
         df_parcelas = pd.DataFrame(ppc, columns=["id", "venda_id", "valor", "status", "data"])
         st.dataframe(df_parcelas)
 
+        total_pago = calcular_total_pagos(nCliente)
+        valor_venda = buscar_valor_total(nCliente)
+        valor_faltando = valor_venda - total_pago
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.metric("total Pago", f"R$ {total_pago:.2f}")
+
+        with col2:
+            st.metric("Valor da venda", f"R$ {valor_venda:.2f}")
+
+        with col3:
+            st.metric("Ainda Falta", f"R$ {valor_faltando:.2f}", delta=valor_faltando)
+
     st.write("Marcar como pago")
     parcela_id = st.number_input("Digite o ID da parcela para alterar o status:", key="parcela_id_status")
 
@@ -156,7 +169,7 @@ with aba2:
     venda_id = st.number_input("digite o id da venda:", key="venda_id_parcelas")
     quantidade = st.selectbox("digite a quantidade de parcelas:", [1, 2, 3, 4, 5, 6], key="quantidade_parcelas")
     valor = st.number_input("digite o valor de cada parcela:", key="valor_parcela")
-    status = st.selectbox("status da parcela:", ["pendente", "paga"], key="status_parcela")
+    status = st.selectbox("status da parcela:", ["pendente", "pago"], key="status_parcela")
     data = st.date_input("data", value=datetime.date.today(), key="data_parcela")
 
     if st.button("adicionar parcelas", key="adicionar_parcelas"):

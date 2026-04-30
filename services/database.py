@@ -102,3 +102,26 @@ def marcar_pago(parcela_id):
     """, (parcela_id,))
     conn.commit()
     conn.close()
+
+def calcular_total_pagos(cliente):
+    conn = sqlite3.connect("storage/banco.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+    SELECT sum(parcelas.valor) FROM parcelas
+    JOIN vendas ON parcelas.venda_id = vendas.id
+    WHERE vendas.cliente = ? AND parcelas.status = 'pago'
+    """, (cliente,))
+    resultado = cursor.fetchone()
+    conn.close()
+    return resultado[0] or 0
+
+def buscar_valor_total(cliente):
+    conn = sqlite3.connect("storage/banco.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+    SELECT valor_total FROM vendas
+    WHERE vendas.cliente = ?
+    """, (cliente,))
+    resultado = cursor.fetchone()
+    conn.close()
+    return resultado[0] or 0
