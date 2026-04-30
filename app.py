@@ -1,3 +1,8 @@
+from services.database import adicionar_parcela, adicionar_venda, criar_banco, listar_parcelas, listar_parcelas_por_cliente, listar_vendas, marcar_pago
+
+criar_banco()
+
+import pandas as pd
 import datetime
 import streamlit as st
 from services.logic import salvar_dados, transacoes, calcular_por_categoria, calcular_resumo, limites, salvar_limites, filtrar_por_periodo
@@ -26,14 +31,14 @@ with aba1:
     #adicionar transação
     st.title("Adicionar transação")
 
-    valor = st.number_input("digite o valor:")
+    valor = st.number_input("digite o valor:", key="valor_transacao")
     tipo = st.selectbox("qual o tipo da transação?", ["entrada", "saida"])
     if tipo == "entrada":
         categoria = None
     elif tipo == "saida":
         categoria = st.selectbox("qual a categoria da transação?", ["alimentação", "transporte", "lazer", "outros"])
-    comentario = st.text_input("comentário (opcional)")
-    data = st.date_input("data", value=datetime.date.today())
+    comentario = st.text_input("comentário (opcional)", key="comentario_transacao")
+    data = st.date_input("data", value=datetime.date.today(), key="data_transacao")
 
 
 
@@ -102,3 +107,59 @@ with aba1:
 with aba2:
     st.title("Serviços em desenvolvimento")
     st.write("Estamos trabalhando em novas funcionalidades para melhorar sua experiência. Fique atento às atualizações futuras!")
+#adicionar venda
+    st.title("Adicionar venda")
+
+    cliente = st.text_input("digite o nome do cliente:", key="cliente_servico")
+    tipo = st.selectbox("qual o tipo do serviço?", ["Manutenção", "venda", "emprestimo"], key="tipo_servico")
+    valor = st.number_input("digite o valor do serviço:", key="valor_servico")
+    comentario = st.text_input("comentário (opcional)", key="comentario_servico")
+    data = st.date_input("data", value=datetime.date.today(), key="data_servico")
+    
+    if st.button("adicionar", key="adicionar_servico"):
+        adicionar_venda(cliente, tipo, valor, comentario, str(data))
+        st.success("venda adicionada com sucesso")
+        st.rerun()
+#adicionar venda
+
+#ver registros de vendas
+    st.title("Vendas registradas")
+
+    vendas = listar_vendas()
+    df = pd.DataFrame(vendas, columns=["id", "cliente", "tipo", "valor_total", "comentario", "data"])
+
+    st.dataframe(df)
+#ver registros de vendas
+
+#ver parcelas por cliente
+    st.title("Consultar parcelas")
+
+    nCliente = st.text_input("digite o nome do cliente para ver as parcelas:", key="cliente_parcelas")
+
+    if st.button("listar parcelas", key="listar_parcelas_cliente"):
+        ppc = listar_parcelas_por_cliente(nCliente)
+        df_parcelas = pd.DataFrame(ppc, columns=["id", "venda_id", "valor", "status", "data"])
+        st.dataframe(df_parcelas)
+
+    st.write("Marcar como pago")
+    parcela_id = st.number_input("Digite o ID da parcela para alterar o status:", key="parcela_id_status")
+
+    if st.button("atualizar status", key="atualizar_status_parcela"):
+        marcar_pago(parcela_id)
+        st.success("Status da parcela atualizado com sucesso")
+        st.rerun()
+#ver parcelas por cliente
+
+#adicionar parcelas e valor a venda
+    st.title("Adicionar parcelas a venda")
+
+    venda_id = st.number_input("digite o id da venda:", key="venda_id_parcelas")
+    quantidade = st.selectbox("digite a quantidade de parcelas:", [1, 2, 3, 4, 5, 6], key="quantidade_parcelas")
+    valor = st.number_input("digite o valor de cada parcela:", key="valor_parcela")
+    status = st.selectbox("status da parcela:", ["pendente", "paga"], key="status_parcela")
+    data = st.date_input("data", value=datetime.date.today(), key="data_parcela")
+
+    if st.button("adicionar parcelas", key="adicionar_parcelas"):
+        adicionar_parcela(venda_id, quantidade, valor, status, str(data))
+        st.success("parcelas adicionadas com sucesso")
+        st.rerun()
