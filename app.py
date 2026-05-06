@@ -90,7 +90,7 @@ else:
 
         st.title("Transações registradas")
         transacoes = listar_transacoes_db()
-        df = pd.DataFrame(transacoes, columns=["id", "valor", "tipo", "categoria", "comentario", "data"])
+        df = pd.DataFrame(transacoes, columns=["id", "valor", "tipo", "categoria", "comentario", "data", "id_usuario"])
         st.dataframe(df)
 
     # ───────────────────────────────────────────
@@ -112,7 +112,7 @@ else:
 
         st.title("Vendas registradas")
         vendas = listar_vendas_db()
-        df_vendas = pd.DataFrame(vendas, columns=["id", "cliente", "tipo", "valor_total", "comentario", "data"])
+        df_vendas = pd.DataFrame(vendas, columns=["id", "cliente", "tipo", "valor_total", "comentario", "data", "id_usuario"])
         st.dataframe(df_vendas)
 
         st.title("Consultar parcelas")
