@@ -46,7 +46,10 @@ if "usuario_id" not in st.session_state:
 # ───────────────────────────────────────────
 # APP PRINCIPAL (usuário logado)
 # ───────────────────────────────────────────
+    
+
 else:
+    usuario_id = st.session_state.usuario_id
     usuario_id = st.session_state["usuario_id"]
     usuario_nome = st.session_state["usuario_nome"]
 
@@ -63,7 +66,7 @@ else:
     with aba1:
         st.title("Resumo Financeiro")
 
-        saldo_entrada, saldo_saida, saldo_total = calcular_resumo_db()
+        saldo_entrada, saldo_saida, saldo_total = calcular_resumo_db(usuario_id)
 
         col1, col2, col3 = st.columns(3)
         with col1:
@@ -84,14 +87,19 @@ else:
         data = st.date_input("Data:", value=datetime.date.today(), key="data_transacao")
 
         if st.button("Adicionar transação"):
-            adicionar_transacao_db(valor, tipo, categoria, comentario, str(data))
+            adicionar_transacao_db(valor, tipo, categoria, comentario, str(data), usuario_id)
             st.success("Transação adicionada com sucesso!")
             st.rerun()
 
         st.title("Transações registradas")
-        transacoes = listar_transacoes_db()
-        df = pd.DataFrame(transacoes, columns=["id", "valor", "tipo", "categoria", "comentario", "data", "id_usuario"])
-        st.dataframe(df)
+        # Chamamos apenas com o ID do usuário logado
+        transacoes = listar_transacoes_db(usuario_id)
+
+        # Ajustamos as colunas para exibir apenas o que interessa ao usuário
+        # Removemos "id" e "usuario_id" da visualização se desejar
+        df_tran = pd.DataFrame(transacoes, columns=["id", "Valor", "Tipo", "Categoria", "Comentário", "Data"])
+        df_tranL = df_tran.drop(columns=["id", "id_usuario"], errors='ignore')
+        st.dataframe(df_tranL)
 
     # ───────────────────────────────────────────
     # ABA SERVIÇOS
@@ -106,25 +114,27 @@ else:
         data_servico = st.date_input("Data:", value=datetime.date.today(), key="data_servico")
 
         if st.button("Adicionar venda"):
-            adicionar_venda_db(cliente, tipo_servico, valor_servico, comentario_servico, str(data_servico))
+            adicionar_venda_db(cliente, tipo_servico, valor_servico, comentario_servico, str(data_servico), usuario_id)
             st.success("Venda adicionada com sucesso!")
             st.rerun()
 
         st.title("Vendas registradas")
-        vendas = listar_vendas_db()
-        df_vendas = pd.DataFrame(vendas, columns=["id", "cliente", "tipo", "valor_total", "comentario", "data", "id_usuario"])
-        st.dataframe(df_vendas)
+        vendas = listar_vendas_db(usuario_id)
+        df_vendas = pd.DataFrame(vendas, columns=["ID da venda", "Cliente", "Tipo", "Valor da venda", "Comentario", "Data"])
+        df_vendasL = df_vendas.drop(columns=["id_usuario"], errors='ignore')
+        st.dataframe(df_vendasL)
 
         st.title("Consultar parcelas")
         nCliente = st.text_input("Nome do cliente:", key="cliente_parcelas")
 
         if st.button("Listar parcelas"):
-            ppc = listar_parcelas_por_cliente_db(nCliente)
-            df_parcelas = pd.DataFrame(ppc, columns=["id", "venda_id", "valor", "status", "data"])
-            st.dataframe(df_parcelas)
+            ppc = listar_parcelas_por_cliente_db(nCliente, usuario_id)
+            df_parcelas = pd.DataFrame(ppc, columns=["id", "ID da venda", "Valor", "Status", "Data", "usuario_id"])
+            df_parcelasL = df_parcelas.drop(columns=["id", "usuario_id"], errors = 'ignore')
+            st.dataframe(df_parcelasL)
 
-            total_pago = calcular_total_pagos_db(nCliente)
-            valor_venda = buscar_valor_total_db(nCliente)
+            total_pago = calcular_total_pagos_db(nCliente, usuario_id)
+            valor_venda = buscar_valor_total_db(nCliente, usuario_id)
             valor_faltando = valor_venda - total_pago
 
             col1, col2, col3 = st.columns(3)
@@ -135,21 +145,14 @@ else:
             with col3:
                 st.metric("Ainda falta", f"R$ {valor_faltando:.2f}")
 
-        st.title("Marcar parcela como paga")
-        parcela_id = st.number_input("ID da parcela:", key="parcela_id_status")
-        if st.button("Atualizar status"):
-            marcar_pago_db(parcela_id)
-            st.success("Status atualizado com sucesso!")
-            st.rerun()
-
-        st.title("Adicionar parcelas à venda")
+        st.title("Adicionar parcelas pagas")
         venda_id = st.number_input("ID da venda:", key="venda_id_parcelas")
         quantidade = st.selectbox("Quantidade de parcelas:", [1, 2, 3, 4, 5, 6])
         valor_parcela = st.number_input("Valor de cada parcela:", key="valor_parcela")
-        status_parcela = st.selectbox("Status:", ["pendente", "pago"])
+        status_parcela = st.selectbox("Status:", ["pago"])
         data_parcela = st.date_input("Data:", value=datetime.date.today(), key="data_parcela")
 
         if st.button("Adicionar parcelas"):
-            adicionar_parcela_db(venda_id, quantidade, valor_parcela, status_parcela, str(data_parcela))
+            adicionar_parcela_db(venda_id, quantidade, valor_parcela, status_parcela, str(data_parcela), usuario_id)
             st.success("Parcelas adicionadas com sucesso!")
             st.rerun()
