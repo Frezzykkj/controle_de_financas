@@ -10,7 +10,8 @@ def criar_banco():
         tipo TEXT,
         valor_total REAL,
         comentario TEXT,
-        data TEXT
+        data TEXT,
+        usuario_id INTEGER         
     )
                  
 """)
@@ -21,6 +22,7 @@ def criar_banco():
         valor REAL,
         status TEXT,
         data TEXT,
+        usuario_id INTEGER,
         FOREIGN KEY (venda_id) REFERENCES vendas (id)
     )
                  
@@ -33,7 +35,8 @@ def criar_banco():
     tipo TEXT,
     categoria TEXT,
     comentario TEXT,
-    data TEXT
+    data TEXT,
+    usuario_id INTEGER
     )
 """)
     

@@ -14,7 +14,7 @@ def adicionar_transacao_db(valor, tipo, categoria, comentario, data):
 def listar_transacoes_db():
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM transacoes")
+    cursor.execute("SELECT * FROM transacoes WHERE usuario_id = ?")
     transacoes = cursor.fetchall()
     conn.close()
     return transacoes
