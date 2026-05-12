@@ -87,26 +87,32 @@ controle_de_financas/
 │   └── banco.db
 ├── requirements.txt
 └── README.md
+
 🔥 Funcionalidades em Desenvolvimento
+
 📌 UX e Interface
 Sidebar profissional
 Dashboard financeiro
 Melhor experiência visual
 Sistema sem IDs manuais
+
 📌 Gestão Avançada
 Categorias personalizadas
 Limites mensais dinâmicos
 Dashboard de faturamento
 Controle de lucro diário/semanal/mensal
+
 📌 Serviços
 Perfil de autônomo
 Áreas de atuação
 Sistema de cobranças
 Alertas de pagamentos pendentes
+
 📌 Arquitetura
 Separação em services/repositories
 Melhor organização de código
 Escalabilidade do sistema
+
 📷 Preview
 Tela Financeira
 Controle de entradas e saídas
@@ -115,16 +121,22 @@ Limites financeiros
 Tela de Serviços
 Cadastro de vendas
 Parcelas
-Controle de cobranças
+Controle de cobranças 
+
 ▶️ Como Executar o Projeto
-1. Clone o repositório
+
+1. Clone o repositório:
 git clone https://github.com/joaordantas/controle_de_financas.git
-2. Entre na pasta
+
+2. Entre na pasta:
 cd controle_de_financas
-3. Instale as dependências
+
+3. Instale as dependências:
 pip install -r requirements.txt
-4. Execute o projeto
+
+4. Execute o projeto:
 streamlit run app.py
+
 🌐 Deploy
 
 O projeto está hospedado via Streamlit Cloud.
