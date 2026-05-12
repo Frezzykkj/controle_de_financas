@@ -1,153 +1,156 @@
-  💰 Controle de Finanças
+# 💰 Controle de Finanças
 
-Aplicação web para gerenciamento financeiro pessoal, com foco em **controle de gastos por categoria**, **limites personalizados** e **visualização clara de dados**.
+Sistema web desenvolvido com Python + Streamlit para controle financeiro pessoal e gestão de serviços/vendas para autônomos.
 
----
-
-  🚀 Visão Geral
-
-O objetivo deste projeto é oferecer uma forma simples e eficiente de:
-
-* Registrar receitas e despesas
-* Categorizar gastos
-* Definir limites por categoria
-* Acompanhar o quanto já foi gasto
-* Visualizar dados com gráficos
-
-Além de ser uma ferramenta pessoal, este projeto também foi desenvolvido como **portfólio**, aplicando conceitos reais de desenvolvimento de software.
+O projeto começou como um simples controle financeiro pessoal e está evoluindo para um mini ERP focado em:
+- organização financeira
+- controle de vendas
+- cobranças
+- parcelamentos
+- relatórios de lucro
+- multiusuário
 
 ---
 
-  🧠 Principais Funcionalidades
+# 🚀 Tecnologias Utilizadas
 
-* ✔️ Cadastro de transações (entrada e saída)
-* ✔️ Comentários em cada transação
-* ✔️ Categorias personalizadas
-* ✔️ Definição de limites por categoria
-* ✔️ Alertas ao atingir limites de gasto
-* ✔️ Dashboard com gráficos
-* ✔️ Persistência de dados (JSON)
-* ✔️ Interface interativa com Streamlit
+- Python
+- Streamlit
+- SQLite
+- Pandas
 
 ---
 
-  🖥️ Preview
+# 📌 Funcionalidades Atuais
 
-<img width="946" height="696" alt="{52ED988D-3014-4770-B607-AD5E86E65D45}" src="https://github.com/user-attachments/assets/3e7c5304-ab81-4d71-ac80-dc07239afaa7" />
-<img width="806" height="544" alt="{67DAE384-BFEB-4C7C-BF68-A2B083980249}" src="https://github.com/user-attachments/assets/5b6be0a1-1229-463a-9f69-ab635c4c10b4" />
-<img width="800" height="458" alt="{AFC45BC1-DDEC-453C-A909-F92DA8D7D5EB}" src="https://github.com/user-attachments/assets/b06d27ec-a5d4-4e6a-a9ff-589b92367859" />
-<img width="763" height="836" alt="{ECCCA1D9-30D7-40DD-AF7D-B2F4E2BE26B8}" src="https://github.com/user-attachments/assets/9144c1d6-d3a1-441a-92b0-cbe6b2bc8dfd" />
-
+## 🔐 Sistema de Login
+- Cadastro de usuários
+- Login individual
+- Sessão por usuário
+- Isolamento de dados por conta
 
 ---
 
-  🏗️ Arquitetura do Projeto
+## 💰 Financeiro
+- Adicionar entradas e saídas
+- Histórico de transações
+- Categorias financeiras
+- Controle de saldo
+- Limites financeiros
+- Banco de dados SQLite
+
+---
+
+## 🛠 Serviços e Vendas
+- Cadastro de vendas/serviços
+- Controle de clientes
+- Parcelamento de vendas
+- Controle de parcelas pagas e pendentes
+- Histórico de cobranças
+- Integração automática com financeiro
+
+---
+
+## 📊 Relatórios
+- Controle de lucro
+- Organização financeira por período
+- Estrutura para:
+  - diário
+  - semanal
+  - mensal
+
+---
+
+# 🧠 Objetivo do Projeto
+
+Criar uma plataforma simples e eficiente para:
+- autônomos
+- vendedores
+- pequenos prestadores de serviço
+
+Com foco em:
+- facilidade de uso
+- organização financeira
+- controle de cobranças
+- produtividade
+
+---
+
+# 🏗 Estrutura Atual do Projeto
 
 ```bash
-finance_app/
+controle_de_financas/
 │
-├── app.py            # Interface (Streamlit)
-├── services/         # Regras de negócio
-├── models/           # Estrutura dos dados
-├── storage/          # Persistência (JSON)
-├── data.json         # Transações
-├── limites.json      # Limites por categoria
-```
-
----
-
-  ⚙️ Tecnologias Utilizadas
-
-* Python
-* Streamlit
-* JSON (persistência de dados)
-
----
-
-  🧩 Decisões Técnicas
-
-* Uso de **JSON** para simplicidade e aprendizado inicial
-* Separação entre **interface e lógica** para melhor organização
-* Implementação de **regras de negócio (limites)** para simular aplicações reais
-* Estrutura modular visando futura migração para banco de dados
-
----
-
-  📊 Funcionalidade de Limites
-
-O sistema permite definir um limite de gasto por categoria, exibindo:
-
-* Valor já gasto
-* Limite definido
-* Valor restante
-
-Além disso, o sistema fornece feedback visual:
-
-* 🟢 Seguro
-* 🟡 Atenção (acima de 80%)
-* 🔴 Limite ultrapassado
-
----
-
-  🔄 Melhorias Futuras
-
-* [ ] Sistema de autenticação (login de usuários)
-* [ ] Banco de dados (SQLite/PostgreSQL)
-* [ ] Filtro por período (data)
-* [ ] Deploy online
-* [ ] Versão mobile
-
----
-
-  ▶️ Como Executar o Projeto
-
-### 1. Clonar o repositório
-
-```bash
+├── app.py
+├── database.py
+├── storage/
+│   └── banco.db
+├── requirements.txt
+└── README.md
+🔥 Funcionalidades em Desenvolvimento
+📌 UX e Interface
+Sidebar profissional
+Dashboard financeiro
+Melhor experiência visual
+Sistema sem IDs manuais
+📌 Gestão Avançada
+Categorias personalizadas
+Limites mensais dinâmicos
+Dashboard de faturamento
+Controle de lucro diário/semanal/mensal
+📌 Serviços
+Perfil de autônomo
+Áreas de atuação
+Sistema de cobranças
+Alertas de pagamentos pendentes
+📌 Arquitetura
+Separação em services/repositories
+Melhor organização de código
+Escalabilidade do sistema
+📷 Preview
+Tela Financeira
+Controle de entradas e saídas
+Histórico financeiro
+Limites financeiros
+Tela de Serviços
+Cadastro de vendas
+Parcelas
+Controle de cobranças
+▶️ Como Executar o Projeto
+1. Clone o repositório
 git clone https://github.com/joaordantas/controle_de_financas.git
+2. Entre na pasta
 cd controle_de_financas
-```
-
-### 2. Criar ambiente virtual (opcional)
-
-```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
-```
-
-### 3. Instalar dependências
-
-```bash
-pip install streamlit
-```
-
-### 4. Executar o projeto
-
-```bash
+3. Instale as dependências
+pip install -r requirements.txt
+4. Execute o projeto
 streamlit run app.py
-```
+🌐 Deploy
 
----
+O projeto está hospedado via Streamlit Cloud.
 
-  🎯 Objetivo do Projeto
+📈 Status do Projeto
 
-Este projeto foi desenvolvido para:
+🚧 Em desenvolvimento contínuo.
 
-* Praticar desenvolvimento com Python
-* Aplicar conceitos de lógica e estrutura de dados
-* Simular um sistema real com regras de negócio
-* Servir como base para evolução para aplicações maiores
+Atualmente focado em:
 
----
+estabilidade
+multiusuário
+integração entre módulos
+experiência do usuário
+👨‍💻 Desenvolvedor
 
-  📌 Status
+João Dantas
 
-🚧 Em desenvolvimento — melhorias contínuas sendo adicionadas
+GitHub:
+https://github.com/joaordantas
 
----
+📌 Observação
 
-  👨‍💻 Autor
+Este projeto está sendo utilizado tanto como:
 
-Desenvolvido por **João Dantas**
-GitHub: https://github.com/joaordantas
+projeto pessoal
+estudo de engenharia de software
+construção de portfólio
+possível produto SaaS futuro
