@@ -1,26 +1,27 @@
-from repositories.usuario_repo import cadastro_usuario, buscar_usuario
-from utils.security import verificar_senha
 import re
+from repositories.usuario_repo import cadastrar_usuario, buscar_usuario_por_email, buscar_perfil
+from utils.security import verificar_senha
 
-def validar_email(email):
+def _validar_email(email: str) -> bool:
     padrao = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    
-    # re.match verifica se o e-mail segue o padrão
-    if re.match(padrao, email):
-        return True
-    return False
+    return bool(re.match(padrao, email))
 
-def registrar(usuario, email, senha):
-    if not validar_email(email):
-        raise Exception("O formato do e-mail não é válido. Use algo como nome@exemplo.com")
-    
-    cadastro_usuario(usuario, email, senha)
+def registrar(usuario: str, email: str, senha: str, tipo_perfil: str):
+    if not _validar_email(email):
+        raise ValueError("E-mail inválido. Use o formato: nome@exemplo.com")
+    if len(senha) < 6:
+        raise ValueError("A senha deve ter pelo menos 6 caracteres.")
+    cadastrar_usuario(usuario, email, senha, tipo_perfil)
 
-def login(email, senha):
-    usuario = buscar_usuario(email)
+def login(email: str, senha: str):
+    """Retorna a tupla do usuário se credenciais válidas, ou None."""
+    usuario = buscar_usuario_por_email(email)
     if usuario is None:
         return None
     senha_hash = usuario[3]
     if verificar_senha(senha, senha_hash):
         return usuario
     return None
+
+def obter_perfil(usuario_id: int) -> str | None:
+    return buscar_perfil(usuario_id)

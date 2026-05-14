@@ -1,77 +1,74 @@
 from database.connection import get_connection
 
-def adicionar_parcela_db(venda_id, quantidade, valor, status, data, usuario_id):
+def adicionar_parcelas(venda_id: int, quantidade: int, valor: float,
+                       status: str, data: str, usuario_id: int):
     conn = get_connection()
     cursor = conn.cursor()
-    for i in range(quantidade):
+    for _ in range(quantidade):
         cursor.execute("""
-        INSERT INTO parcelas (venda_id, valor, status, data, usuario_id)
-        VALUES (?, ?, ?, ?, ?)
+            INSERT INTO parcelas (venda_id, valor, status, data, usuario_id)
+            VALUES (?, ?, ?, ?, ?)
         """, (venda_id, valor, status, data, usuario_id))
     conn.commit()
     conn.close()
 
-def listar_parcelas_db():
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM parcelas")
-    parcelas = cursor.fetchall()
-    conn.close()
-    return parcelas
-
-def listar_parcelas_por_cliente_db(cliente, usuario_id):
+def listar_parcelas_por_cliente(cliente: str, usuario_id: int) -> list:
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-    SELECT parcelas.* FROM parcelas
-    JOIN vendas ON parcelas.venda_id = vendas.id
-    WHERE vendas.cliente = ? AND vendas.usuario_id = ?
+        SELECT parcelas.id, parcelas.venda_id, parcelas.valor, parcelas.status, parcelas.data
+        FROM parcelas
+        JOIN vendas ON parcelas.venda_id = vendas.id
+        WHERE vendas.cliente = ? AND vendas.usuario_id = ?
+        ORDER BY parcelas.data
     """, (cliente, usuario_id))
     parcelas = cursor.fetchall()
     conn.close()
     return parcelas
 
-def atualizar_parcela_db(parcela_id, valor, data):
+def marcar_parcela_paga(parcela_id: int, usuario_id: int) -> bool:
+    """Retorna True se a parcela foi marcada com sucesso, False se não encontrou."""
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-    UPDATE parcelas
-    SET valor = ?, data = ?
-    WHERE id = ?
-    """, (valor, data, parcela_id))
+        UPDATE parcelas SET status = 'pago'
+        WHERE id = ? AND usuario_id = ? AND status = 'pendente'
+    """, (parcela_id, usuario_id))
+    sucesso = cursor.rowcount > 0
     conn.commit()
     conn.close()
+    return sucesso
 
-def marcar_pago_db(parcela_id):
+def buscar_valor_parcela(parcela_id: int, usuario_id: int) -> float:
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-    UPDATE parcelas
-    SET status = 'pago'
-    WHERE id = ?
-    """, (parcela_id,))
-    conn.commit()
+        SELECT valor FROM parcelas WHERE id = ? AND usuario_id = ?
+    """, (parcela_id, usuario_id))
+    resultado = cursor.fetchone()
     conn.close()
+    return resultado[0] if resultado else 0.0
 
-def calcular_total_pagos_db(cliente, usuario_id):
+def calcular_total_pago(cliente: str, usuario_id: int) -> float:
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-    SELECT sum(parcelas.valor) FROM parcelas
-    JOIN vendas ON parcelas.venda_id = vendas.id
-    WHERE vendas.cliente = ? AND parcelas.status = 'pago' AND vendas.usuario_id = ?
+        SELECT SUM(parcelas.valor)
+        FROM parcelas
+        JOIN vendas ON parcelas.venda_id = vendas.id
+        WHERE vendas.cliente = ? AND parcelas.status = 'pago' AND vendas.usuario_id = ?
     """, (cliente, usuario_id))
     resultado = cursor.fetchone()
     conn.close()
-    return resultado[0] or 0
+    return resultado[0] or 0.0
 
-def buscar_valor_total_db(cliente, usuario_id):
+def buscar_valor_total_vendas(cliente: str, usuario_id: int) -> float:
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-    SELECT sum(valor_total) FROM vendas
-    WHERE vendas.cliente = ? AND vendas.usuario_id = ?
-    """, (cliente, usuario_id)) 
+        SELECT SUM(valor_total) FROM vendas
+        WHERE cliente = ? AND usuario_id = ?
+    """, (cliente, usuario_id))
     resultado = cursor.fetchone()
     conn.close()
-    return resultado[0] or 0
+    return resultado[0] or 0.0
